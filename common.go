@@ -23,8 +23,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"golang.org/x/sys/cpu"
 )
 
 const (
@@ -1446,19 +1444,6 @@ func defaultCipherSuitesTLS13() []uint16 {
 
 func initDefaultCipherSuites() {
 	var topCipherSuites []uint16
-
-	// Check the cpu flags for each platform that has optimized GCM implementations.
-	// Worst case, these variables will just all be false.
-	var (
-		hasGCMAsmAMD64 = cpu.X86.HasAES && cpu.X86.HasPCLMULQDQ
-		hasGCMAsmARM64 = cpu.ARM64.HasAES && cpu.ARM64.HasPMULL
-		// Keep in sync with crypto/aes/cipher_s390x.go.
-		// TODO: check for s390
-		// hasGCMAsmS390X = cpu.S390X.HasAES && cpu.S390X.HasAESCBC && cpu.S390X.HasAESCTR && (cpu.S390X.HasGHASH || cpu.S390X.HasAESGCM)
-		hasGCMAsmS390X = false
-
-		hasGCMAsm = hasGCMAsmAMD64 || hasGCMAsmARM64 || hasGCMAsmS390X
-	)
 
 	if hasGCMAsm {
 		// If AES-GCM hardware is provided then prioritise AES-GCM
